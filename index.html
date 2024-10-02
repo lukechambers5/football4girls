@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athlete Insights</title>
+    <style>
+        /* Importing Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #00796b;
+            margin: 40px 0;
+            font-size: 2.5em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            margin-right: 10px;
+            font-size: 1.1em;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 2px solid #00796b;
+            border-radius: 5px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #004d40;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+            background-color: #004d40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .player-info {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .player-info:hover {
+            transform: translateY(-2px);
+        }
+        h2 {
+            color: #00796b;
+            margin-top: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #00796b;
+            padding-bottom: 5px;
+        }
+        h3 {
+            margin: 10px 0;
+            font-size: 1.5em;
+            color: #555;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        img {
+            display: block;
+            margin: 10px auto;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        a {
+            text-decoration: none;
+            color: #00796b;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: #004d40;
+        }
+        .player-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .player-images img {
+            max-width: 150px;
+            flex: 1 1 150px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            button {
+                width: 100%;
+            }
+            .player-info {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Athlete Insights</h1>
+    <form method="post">
+        <label for="player_name">Player Name (First and last name please):</label>
+        <input type="text" id="player_name" name="player_name" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if player_info %}
+    <div class="player-info">
+        <h2>{{ player_info.title }}</h2>
+        <p>{{ player_info.extract }}</p>
+        
+        {% if player_info.image_url %}
+        <img src="{{ player_info.image_url }}" alt="{{ player_info.title }}">
+        {% endif %}
+        
+        <h2>Personal Life</h2>
+        <h3>Dating Life <i class="fas fa-heart" style="color:red;"></i></h3>
+        <p>{{ player_info.dating_life or 'No rizz' }}</p>
+
+        <h3>Family Life</h3>
+        <p>{{ player_info.family_life or 'No family information found.' }}</p>
+        
+        <h2>Player Images</h2>
+        <div class="player-images">
+            {% if player_info.player_images %}
+                {% for img in player_info.player_images %}
+                    <img src="{{ img }}" alt="Image of {{ player_info.title }}">
+                {% endfor %}
+            {% else %}
+                <p>No additional images found.</p>
+            {% endif %}
+        </div>
+
+        {% if player_info.summary_url %}
+        <p><a href="{{ player_info.summary_url }}" target="_blank">Read more on Wikipedia</a></p>
+        {% endif %}
+    </div>
+    
+    {% elif player_info is not none %}
+    <p>No information found.</p>
+    {% endif %}
+</body>
+</html>
