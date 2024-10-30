@@ -40,8 +40,12 @@ def search_player(player_name):
 # Function to extract the personal life section
 def extract_personal_life_info(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-    personal_life_header = soup.find('span', id='Personal_life') or soup.find('h2', string=re.compile("Personal life", re.IGNORECASE))
-
+    personal_life_header = (
+        soup.find('span', id='Personal_life') or 
+        soup.find('h2', string=re.compile("Personal life", re.IGNORECASE)) or 
+        soup.find('span', id='Early_life') or 
+        soup.find('h2', string=re.compile("Early life", re.IGNORECASE))
+    )
     if not personal_life_header:
         print("Personal life header not found in the HTML content.")
         return None
@@ -50,9 +54,7 @@ def extract_personal_life_info(html_content):
     content = personal_life_header.find_all_next()
 
     for element in content:
-        if element.name == 'h2' and "Personal life" not in element.text:
-            break
-        if element.name == 'h3' and "Religious beliefs" not in element.text and "Relationships and marriages" not in element.text:
+        if element.name == 'h2':  # Stop at the next main section
             break
         if element.name in ['p', 'ul', 'ol', 'div', 'table', 'dl']:
             personal_life_content += element.get_text(separator="\n", strip=True) + "\n"
@@ -167,7 +169,7 @@ def dating_stuff(cleaned_text):
                     used_sentences.add(sentence)  # Mark this sentence as used
                     break
 
-    return dating if dating else "No dating information found.", used_sentences
+    return dating if dating else "Most likely single. Check wikipedia for more info...", used_sentences
 
 
 
@@ -178,7 +180,7 @@ def family_stuff(cleaned_text, used_sentences):
 
     family = ''
     family_keywords = ["son", "daughter", "brother", "sister", "grandfather", "grandmother",
-                       "children", "family"]
+                       "children", "family", "father", "mother"]
 
     sentences = cleaned_text.split('.')
     for sentence in sentences:
