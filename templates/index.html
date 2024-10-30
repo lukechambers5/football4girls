@@ -16,8 +16,7 @@
             color: #333;
             position: relative;
             min-height: 100vh; /* Ensure the body takes full height */
-    }
-
+        }
 
         /* Background image with translucence */
         .background {
@@ -29,8 +28,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            /*opacity: 0.5; /* Make it translucent */
             z-index: -1; /* Send it to the back */
+            opacity: 0.5; /* Adjust this to control visibility */
         }
 
         /* Rest of your CSS remains unchanged */
@@ -204,7 +203,7 @@
     {% endif %}
     <!-- Developer Contact Section -->
     <div class="developer-contact">
-        <p>For inquiries, contact the developer: <a href="ogroid.help@gmail.com">ogroid.help@gmail.com</a></p>
+        <p>For inquiries, contact the developer: <a href="mailto:ogroid.help@gmail.com">ogroid.help@gmail.com</a></p>
     </div>
   
 </body>
