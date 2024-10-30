@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Athlete Insights</title>
+    <title>Football for the Girls! v1.0</title>
     <style>
         /* Importing Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -12,12 +12,31 @@
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            background: linear-gradient(135deg, #f8bbd0, #f3e5f5);
             color: #333;
+            position: relative;
+            min-height: 100vh; /* Ensure the body takes full height */
+    }
+
+
+        /* Background image with translucence */
+        .background {
+            background-image: url('{{ url_for("static", filename="images/sports-balls.jpg") }}');
+            background-size: cover; /* Cover the entire body */
+            background-position: center; /* Center the background image */
+            position: absolute; /* Position absolutely */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /*opacity: 0.5; /* Make it translucent */
+            z-index: -1; /* Send it to the back */
         }
+
+        /* Rest of your CSS remains unchanged */
         h1 {
             text-align: center;
-            color: #00796b;
+            color: #8e24aa; /* Deep purple for heading */
             margin: 40px 0;
             font-size: 2.5em;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
@@ -38,18 +57,18 @@
         }
         input[type="text"] {
             padding: 10px;
-            border: 2px solid #00796b;
+            border: 2px solid #ba68c8; /* Soft purple border */
             border-radius: 5px;
             font-size: 1em;
             outline: none;
             transition: border-color 0.3s;
         }
         input[type="text"]:focus {
-            border-color: #004d40;
+            border-color: #7b1fa2; /* Darker purple on focus */
         }
         button {
             padding: 10px 15px;
-            background-color: #00796b;
+            background-color: #ab47bc; /* Bright pink button */
             color: white;
             border: none;
             border-radius: 5px;
@@ -59,7 +78,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         button:hover {
-            background-color: #004d40;
+            background-color: #8e24aa;
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
@@ -76,10 +95,10 @@
             transform: translateY(-2px);
         }
         h2 {
-            color: #00796b;
+            color: #8e24aa;
             margin-top: 20px;
             font-size: 1.8em;
-            border-bottom: 2px solid #00796b;
+            border-bottom: 2px solid #8e24aa;
             padding-bottom: 5px;
         }
         h3 {
@@ -94,7 +113,7 @@
         img {
             display: block;
             margin: 10px auto;
-            max-width: 300px;
+            max-width: 250px; /* Smaller image size */
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
@@ -105,12 +124,12 @@
         }
         a {
             text-decoration: none;
-            color: #00796b;
+            color: #ab47bc;
             font-weight: bold;
         }
         a:hover {
             text-decoration: underline;
-            color: #004d40;
+            color: #7b1fa2;
         }
         .player-images {
             display: flex;
@@ -141,7 +160,8 @@
     </style>
 </head>
 <body>
-    <h1>Athlete Insights</h1>
+    <div class="background"></div> <!-- Background image div -->
+    <h1>Football for the Girls!</h1>
     <form method="post">
         <label for="player_name">Player Name (First and last name please):</label>
         <input type="text" id="player_name" name="player_name" required>
