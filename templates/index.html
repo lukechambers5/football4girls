@@ -1,9 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DW0XMHFEH7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-DW0XMHFEH7');
+    </script>
+    <!-- End Google Analytics -->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football for the Girls! v1.0</title>
+
     <style>
         /* Importing Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
@@ -29,7 +41,6 @@
             right: 0;
             bottom: 0;
             z-index: -1; /* Send it to the back */
-            opacity: 0.5; /* Adjust this to control visibility */
         }
 
         /* Rest of your CSS remains unchanged */
@@ -158,6 +169,18 @@
         }
     </style>
 </head>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DW0XMHFEH7"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DW0XMHFEH7');
+</script>
+<!-- End Google Analytics -->
+
 <body>
     <div class="background"></div> <!-- Background image div -->
     <h1>Football for the Girls!</h1>
@@ -198,13 +221,9 @@
         <p><a href="{{ player_info.summary_url }}" target="_blank">Read more on Wikipedia</a></p>
         {% endif %}
     </div>
-  {% elif player_info is not none %}
+    
+    {% elif player_info is not none %}
     <p>No information found.</p>
     {% endif %}
-    <!-- Developer Contact Section -->
-    <div class="developer-contact">
-        <p>For inquiries, contact the developer: <a href="mailto:ogroid.help@gmail.com">ogroid.help@gmail.com</a></p>
-    </div>
-  
 </body>
 </html>
