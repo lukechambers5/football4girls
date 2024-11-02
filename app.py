@@ -20,7 +20,7 @@ def index():
             return redirect(url_for('error_page', message="Website unexpectedly closed the connection."))
         
         except Exception as e:  # Catch other exceptions    return redirect(url_for('error_page', message=str(e)))
-
+            return redirect(url_for('error_page', message=str(e)))
     return render_template('index.html', player_info=player_info)
 
 @app.route('/error')
