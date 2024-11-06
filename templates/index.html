@@ -3,22 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football for the Girls! v1.1</title>
+    <title>Football 4 the Girls! v1.1</title>
 
     <style>
         /* Importing Google Font */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+    
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, rgba(240, 220, 250, 0.8), rgba(220, 200, 240, 0.9));
+            background: linear-gradient(135deg, #f8bbd0, #f3e5f5);
             color: #333;
             position: relative;
-            min-height: 100vh;
+            min-height: 100vh; /* Ensure the body takes full height */
         }
 
+        .trending-player {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        font-size: 1.2em;
+        color: #8e24aa;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        z-index: 999;
+        width: 300px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .trending-player:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .player-header h2 {
+        color: #8e24aa;
+        margin-bottom: 10px;
+        font-size: 1.8em;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .player-header p {
+        font-size: 1em;
+        margin: 5px 0;
+        color: #555;
+    }
+
+    .player-image-container {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .trending-player-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .trending-player-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .view-more-btn {
+        padding: 12px 20px;
+        background-color: #ab47bc;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .view-more-btn:hover {
+        background-color: #8e24aa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .player-number {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.5em;
+            color: #8e24aa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 999;
+            width: 150px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .player-number:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-number h3 {
+            font-size: 1.8em;
+            color: #8e24aa;
+            margin-bottom: 10px;
+        }
+    
+        /* Background image with translucence */
+        .background {
+            background-image: url('{{ url_for("static", filename="images/sports-balls.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+
+        .developer-contact {
+            position: absolute;
+            bottom: 30px; /* Adjusts how far it is from the bottom */
+            left: 50%;
+            transform: translateX(-50%); /* Centers it horizontally */
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+        }
+    
         h1 {
             text-align: center;
             color: #8e24aa;
@@ -26,49 +154,44 @@
             font-size: 2.5em;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
-
-        /* Form Styles */
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
+    
+        .form-container {
+            max-width: 500px; /* Set a maximum width for the grey bar */
+            margin: 0 auto; /* Center the container */
+            background: #ffffff; /* Changed to solid white */
+            padding: 15px 20px; /* Adjust padding as needed */
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+    
         label {
+            margin-right: 10px;
             font-size: 1.1em;
             color: #555;
-            margin-bottom: 10px;
-            font-weight: bold;
-            text-align: center;
         }
-
+    
         input[type="text"] {
             padding: 10px;
             border: 2px solid #ba68c8;
             border-radius: 5px;
             font-size: 1em;
             outline: none;
-            width: 100%;
-            max-width: 400px;
             transition: border-color 0.3s;
         }
-
+    
         input[type="text"]:focus {
             border-color: #7b1fa2;
         }
-
+    
         button {
-            margin-top: 15px;
-            padding: 10px 20px;
+            padding: 10px 15px;
             background-color: #ab47bc;
             color: white;
             border: none;
@@ -78,49 +201,208 @@
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-
+    
         button:hover {
             background-color: #8e24aa;
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-
-        /* Developer Contact Style */
-        .developer-contact {
-            position: absolute;
-            bottom: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 1em;
+    
+        .player-info {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+    
+        .player-info:hover {
+            transform: translateY(-2px);
+        }
+    
+        h2 {
+            color: #8e24aa;
+            margin-top: 20px;
+            font-size: 1.8em;
+            border-bottom: 2px solid #8e24aa;
+            padding-bottom: 5px;
+        }
+    
+        h3 {
+            margin: 10px 0;
+            font-size: 1.5em;
             color: #555;
         }
+    
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+    
+        img {
+            display: block;
+            margin: 10px auto;
+            max-width: 250px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+    
+        img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+    
+        a {
+            text-decoration: none;
+            color: #ab47bc;
+            font-weight: bold;
+        }
+    
+        a:hover {
+            text-decoration: underline;
+            color: #7b1fa2;
+        }
+    
+        .player-images {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+    
+        .player-images img {
+            max-width: 150px;
+            flex: 1 1 150px;
+        }
 
-        /* Responsive adjustments */
+        .corner-logo {
+            position: fixed;
+            bottom: 20px; /* Adjust this value to move the logo up/down */
+            right: 20px;  /* Adjust this value to move the logo left/right */
+            width: 200px; /* Increase the size as needed */
+            height: auto; /* Maintain aspect ratio */
+            opacity: 0.8; /* Optional: Add transparency if you want */
+            z-index: 1000; /* Ensures the logo is above other elements */
+        }
+
+
+    
         @media (max-width: 600px) {
             h1 {
                 font-size: 2em;
             }
+            h2 {
+                font-size: 1.5em;
+            }
             button {
                 width: 100%;
             }
-            form {
+            .player-info {
                 padding: 15px;
             }
         }
     </style>
+    
 </head>
 
-<body>
-    <h1>Football for the Girls!</h1>
-    <form method="post">
-        <label for="player_name">Player Name (First and last name please):</label>
-        <input type="text" id="player_name" name="player_name" required>
-        <button type="submit">Search</button>
-    </form>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DW0XMHFEH7"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-    <div class="developer-contact">
-        <p>For inquiries and suggestions, contact the developer: <a href="mailto:ogroid.help@gmail.com">ogroid.help@gmail.com</a></p>
+    gtag('config', 'G-DW0XMHFEH7');
+</script>
+<!-- End Google Analytics -->
+
+<body>
+    <div class="background"></div> 
+    
+    <!-- Link "Football 4 the Girls!" to the home page -->
+    <h1><a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">Football 4 the Girls!</a></h1>
+    
+    {% if most_searched_player %}
+    <div class="trending-player" id="trendingPlayer">
+        <div class="player-header">
+            <h2>TRENDING PLAYER</h2>
+            <p>{{ most_searched_player.name }}</p>
+            <p>{{ most_searched_player.search_count }} searches!</p>
+        </div>
+        <div class="player-image-container">
+            {% if most_searched_player.image_url %}
+                <img src="{{ most_searched_player.image_url }}" alt="Trending Player Image" class="trending-player-image">
+            {% else %}
+                <img src="https://via.placeholder.com/150" alt="Trending Player Placeholder" class="trending-player-image">
+            {% endif %}
+        </div>
+        <button class="view-more-btn" onclick="window.location.href='https://en.wikipedia.org/wiki/{{ most_searched_player.name | replace(' ', '_') }}'">View Profile</button>
     </div>
+{% endif %}
+
+{% if player_info and player_info.number %}
+    <div class="player-number">
+        <h3>Number</h3>
+        <p>{{ player_info.number }}</p>
+    </div>
+    {% endif %}
+
+
+    <!-- Search Form -->
+    <div class="form-container">
+        <form method="post" onsubmit="hideTrendingPlayer()">
+            <label for="player_name">Player Name:</label>
+            <input type="text" id="player_name" name="player_name" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    {% if player_info %}
+    <div class="player-info">
+        <h2>{{ player_info.title }}</h2>
+        <p>{{ player_info.extract }}</p>
+        
+        {% if player_info.image_url %}
+        <img src="{{ player_info.image_url }}" alt="{{ player_info.title }}">
+        {% endif %}
+        
+        <h2>Personal Life</h2>
+        <h3>Dating Life <i class="fas fa-heart" style="color:red;"></i></h3>
+        <p>{{ player_info.dating_life or 'No rizz' }}</p>
+
+        <h3>Family Life</h3>
+        <p>{{ player_info.family_life or 'No family information found.' }}</p>
+        
+        <h2>Player Images</h2>
+        <div class="player-images">
+            {% if player_info.player_images %}
+                {% for img in player_info.player_images %}
+                    <img src="{{ img }}" alt="Image of {{ player_info.title }}">
+                {% endfor %}
+            {% else %}
+                <p>No additional images found.</p>
+            {% endif %}
+        </div>
+
+        {% if player_info.summary_url %}
+        <p><a href="{{ player_info.summary_url }}" target="_blank">Read more on Wikipedia</a></p>
+        {% endif %}
+    </div>
+    {% elif player_info is not none %}
+    <p>No information found.</p>
+    {% endif %}
+    
+    <!-- Developer Contact Section -->
+    <div class="developer-contact">
+        <p>For inquiries, contact the developer: <a href="mailto:ogroid.help@gmail.com">ogroid.help@gmail.com</a></p>
+    </div>
+
+    <!-- Clickable logo that links to lebron.jpeg -->
+    <a href="{{ url_for('static', filename='images/Lebron.jpg') }}" target="_blank">
+        <img src="{{ url_for('static', filename='images/Logo.png') }}" alt="Website Logo" class="corner-logo">
+    </a>
 </body>
 </html>

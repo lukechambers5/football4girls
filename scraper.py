@@ -1,4 +1,7 @@
 import re
+import csv
+import os
+from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 from requests.adapters import HTTPAdapter
@@ -37,6 +40,43 @@ def search_player(player_name):
         print(f"An error occurred during the search: {e}")
         return None
 
+def log_search(player_name):
+    file_path = 'logs/search_log.csv'
+    file_exists = os.path.isfile(file_path)
+    search_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    log_data = [player_name, search_time]
+    with open(file_path, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        if not file_exists:
+            writer.writerow(['Player Name', 'Search Timestamp'])
+        writer.writerow(log_data)
+
+def get_player_image(player_name):
+    # Format the player name for use in the Wikipedia URL
+    player_name = player_name.replace(" ", "_")
+    url = f"https://en.wikipedia.org/wiki/{player_name}"
+
+    try:
+        # Send a GET request to the Wikipedia page
+        response = requests.get(url)
+        response.raise_for_status()  # Check for any HTTP errors
+        
+        # Parse the page content using BeautifulSoup
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Find the first image in the infobox (often the player's image)
+        infobox = soup.find('table', {'class': 'infobox'})
+        if infobox:
+            img_tag = infobox.find('img')
+            if img_tag:
+                # Extract the image URL (in relative format)
+                image_url = 'https:' + img_tag['src']
+                return image_url
+        return None  # If no image is found
+
+    except Exception as e:
+        print(f"Error fetching image for {player_name}: {e}")
+        return None
 # Function to extract the personal life section
 def extract_personal_life_info(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -114,6 +154,8 @@ def get_player_info(player_name):
         else:
             title += " (Active)"  # Assuming they are active if not retired
 
+        player_number = number(html_content)
+
         return {
             'title': title,
             'extract': position_explanation,
@@ -121,7 +163,8 @@ def get_player_info(player_name):
             'summary_url': summary_url,
             'dating_life': dating_info,
             'family_life': family_info,
-            'player_images': player_images  # Include all player images
+            'player_images': player_images,  # Include all player images
+            'player_number': player_number  # Include player's number
         }
 
     except requests.exceptions.RequestException as e:
@@ -154,9 +197,7 @@ def dating_stuff(cleaned_text):
         sentence = sentence.strip()
         
         # Remove unwanted characters
-        sentence = re.sub(r'["\(\)]', '', sentence) 
-        print(f"Processed sentence: {sentence.lower()}")
-        
+        sentence = re.sub(r'["\(\)]', '', sentence)         
         # Check if sentence starts with any subheader to skip (instead of exact match)
         if sentence.lower().strip() == "relationships and marriages":
             continue
@@ -180,7 +221,7 @@ def family_stuff(cleaned_text, used_sentences):
 
     family = ''
     family_keywords = ["son", "daughter", "brother", "sister", "grandfather", "grandmother",
-                       "children", "family", "father", "mother"]
+                       "children", "family", "father", "mother", "childhood"]
 
     sentences = cleaned_text.split('.')
     for sentence in sentences:
@@ -296,18 +337,14 @@ def position(name):
     infobox = soup.find('table', class_='infobox')
 
     if infobox:
-        print("Infobox found.")
         
         # Try to find the 'Position' row in the infobox
         position_row = infobox.find('th', string=lambda text: text and "Position" in text)
-        if position_row:
-            print("Position row found:", position_row.get_text(strip=True))
-            
+        if position_row:            
             # Get the next 'td' element with the position information
             position_value = position_row.find_next('td')
             if position_value:
                 position_text = position_value.get_text(separator=" ", strip=True)
-                print("Position value found:", position_text)
                 return position_text
             else:
                 print("No 'td' element found after 'Position'.")
@@ -315,16 +352,42 @@ def position(name):
             print("Position row not found in infobox.")
     else:
         print(f"Infobox not found for {name}. Printing the first table on the page for inspection:")
-        
-        # If infobox is not found, print the first table for debugging
-        first_table = soup.find('table')
-        if first_table:
-            print(first_table.prettify()[:2000])  # Print the first 2000 characters for easier inspection
-        else:
-            print("No table found on the page.")
     
     return "Position not found"
 
+def number(name):
+    html_content = get_page_content(name)
+
+    # Check if the HTML content was successfully retrieved
+    if not html_content:
+        print(f"Failed to retrieve HTML content for {name}.")
+        return None
+
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Try to find the infobox specifically with class 'infobox vcard' or any infobox
+    infobox = soup.find('table', class_='infobox')
+
+    if infobox:
+        print("Infobox found.")
+        
+        # Try to find the 'Position' row in the infobox
+        number_row = infobox.find('th', string=lambda text: text and "No." in text)
+        if number_row:
+            number_val = number_row.find_next('td')
+            print(number_val)
+            if number_val:
+                number = number_val.get_text(separator=" ", strip=True)
+                print(number)
+                return number
+            else:
+                print("No 'td' element found after 'number'.")
+        else:
+            print("number row not found in infobox.")
+    else:
+        print(f"Infobox not found for {name}. Printing the first table on the page for inspection:")
+    
+    return "Position not found"
 def determine_position(summary, name):
     if("football" in summary):
         return football_position(name)
@@ -386,30 +449,31 @@ def basketball_position(name):
     else:
         return f"{name} is retired and is currently a {position_val}!"
 
-# Hockey position logic
 def hockey_position(name):
     position_val = position(name).lower()
     
-    if "goalie" or "goaltender" in position_val:
+    if "goalie" in position_val or "goaltender" in position_val:
         return f'{name} plays the Goalie position! He is the player who protects the goal. His main job is to stop the puck from going into the net.'
-    elif "defenseman" in position_val:
+    elif "defenseman" in position_val or "defenceman" in position_val:
         return f'{name} plays the Defenseman position! There are usually two on the ice. They help the goalie by blocking shots and keeping opposing players away from the goal. They also assist in moving the puck up the ice.'
-    elif "forward" in position_val:
+    elif ("forward" in position_val or "centre" in position_val or "center" in position_val or 
+          "wing" in position_val or "right wing" in position_val or "left wing" in position_val or "winger" in position_val):
         return f'{name} plays the Forward position! He focuses on scoring goals and assisting his teammates, controlling the puck and setting up plays. He plays both offense and defense.'
     else:
         return f"{name} is retired and is currently a {position_val}!"
+
 
 # Soccer position logic
 def soccer_position(name):
     position_val = position(name).lower()
     
     if "goalkeeper" in position_val:
-        return f'{name} plays the Goalkeeper position! He is the player who protects the goal. His main job is to stop the ball from going into the net.'
+        return f'{name} plays the Goalkeeper position! They are the player who protects the goal. Their main job is to stop the ball from going into the net.'
     elif "defender" in position_val:
-        return f'{name} plays the Defender position! He helps protect the goal by blocking attacks from opposing players and often supports the midfield.'
+        return f'{name} plays the Defender position! They help protect the goal by blocking attacks from opposing players and often supports the midfield.'
     elif "midfielder" in position_val:
-        return f'{name} plays the Midfielder position! He controls the play, linking defense and attack, and helps both in defending and creating scoring opportunities.'
+        return f'{name} plays the Midfielder position! They control the play, linking defense and attack, and helps both in defending and creating scoring opportunities.'
     elif "forward" in position_val or "striker" in position_val:
-        return f'{name} plays the Forward position! He focuses on scoring goals and creating chances for the team, often leading the attack.'
+        return f'{name} plays the Forward position! They focus on scoring goals and creating chances for the team, often leading the attack.'
     else:
         return f"{name} is retired and is currently a {position_val}!"
