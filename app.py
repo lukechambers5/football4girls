@@ -43,6 +43,18 @@ def get_most_searched_player():
     except FileNotFoundError:
         return None  # If the file doesn't exist, return None
 
+def update_csv(player_data):
+    header = ['Name']
+
+    try:
+        with open('logs/search_log.csv', mode = 'a', newline = '', encoding = 'utf-8') as file:
+            writer = csv.writer(file)
+
+            if file.tell() == 0:
+                writer.writerow(header)
+                writer.writerow(player_data)
+    except Exception as e:
+        print(f"Error updating CSV: {e}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -55,11 +67,9 @@ def index():
         try:
             player_info = get_player_info(player_name)
             if player_info is None:
-                return render_template(
-                    'index.html',
-                    player_info=None,
-                    most_searched_player=most_searched_player)
-
+                return render_template('index.html', player_info=None, most_searched_player=most_searched_player)
+            player_data = [player_name]
+            update_csv(player_data)
         except requests.exceptions.ConnectionError:
             return redirect(
                 url_for('error_page',
