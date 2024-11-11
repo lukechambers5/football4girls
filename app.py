@@ -2,65 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for
 from scraper import log_search, get_player_info, get_player_image
 import requests  # Import requests to handle connection errors
 from collections import Counter  # Ensure the proper import
+from trending_player import create_db
 import csv
+import os
 
 app = Flask(__name__, static_url_path='/static')
-
-
-# Function to get the most searched player
-def get_most_searched_player():
-    file_path = 'logs/search_log.csv'
-
-    try:
-        # Open the CSV file and read it
-        with open(file_path, 'r') as file:
-            reader = csv.reader(file)
-            next(reader)  # Skip the header row
-
-            # List to hold player names from the CSV file
-            player_names = [row[0] for row in reader]
-
-            # Count occurrences of each player name
-            player_counts = Counter(player_names)
-
-            # Find the most common player (most searched)
-            if player_counts:
-                most_searched = player_counts.most_common(1)[
-                    0]  # Get the most common player
-
-                # Get the image for the most searched player
-                player_image_url = get_player_image(most_searched[0])
-
-                # Return the player's name, search count, and image URL
-                return {
-                    'name': most_searched[0],
-                    'search_count': most_searched[1],
-                    'image_url': player_image_url
-                }
-            else:
-                return None  # If no data, return None
-
-    except FileNotFoundError:
-        return None  # If the file doesn't exist, return None
-
-def update_csv(player_data):
-    header = ['Name']
-
-    try:
-        with open('logs/search_log.csv', mode = 'a', newline = '', encoding = 'utf-8') as file:
-            writer = csv.writer(file)
-
-            if file.tell() == 0:
-                writer.writerow(header)
-                writer.writerow(player_data)
-    except Exception as e:
-        print(f"Error updating CSV: {e}")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     player_info = None
-    most_searched_player = get_most_searched_player()  
-
+    create_db()
     if request.method == 'POST':
         player_name = request.form['player_name']
         log_search(player_name)
@@ -90,7 +41,8 @@ def error_page():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=80)
+    app.run(debug=True)
+
 
 #sudo nano /etc/resolv.conf - DNS SERVER CHANGE
 

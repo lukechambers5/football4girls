@@ -134,8 +134,6 @@ def get_player_info(player_name):
         image_url = data.get('thumbnail', {}).get('source', None)
         summary_url = data.get('content_urls', {}).get('desktop', {}).get('page', None)
 
-        # Extract all images
-        player_images = extract_images(html_content)
 
         personal_life_content = extract_personal_life_info(html_content)
         cleaned_text = remove_bracket_numbers(personal_life_content)
@@ -163,7 +161,6 @@ def get_player_info(player_name):
             'summary_url': summary_url,
             'dating_life': dating_info,
             'family_life': family_info,
-            'player_images': player_images,  # Include all player images
             'player_number': player_number  # Include player's number
         }
 
@@ -251,77 +248,6 @@ def check_retirement(summary):
     
     # If no retirement keyword is found, assume the player is not retired
     return False
-
-def extract_images(html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
-    images = []
-
-    # Minimum dimensions for valid images
-    MIN_IMAGE_WIDTH = 50
-    MIN_IMAGE_HEIGHT = 50
-
-    def is_valid_image(img_tag):
-        # Check if the image has valid dimensions, skip small icons/logos
-        if img_tag.has_attr('width') and img_tag.has_attr('height'):
-            try:
-                width = int(img_tag['width'])
-                height = int(img_tag['height'])
-                if width < MIN_IMAGE_WIDTH or height < MIN_IMAGE_HEIGHT:
-                    return False
-            except ValueError:
-                return False  # In case width/height are not numbers
-
-        # Filter out images likely to be logos, icons, or placeholders
-        img_url = img_tag['src']
-        alt_text = img_tag.get('alt', '').lower()
-        if any(ext in img_url.lower() for ext in ['logo', 'icon', 'sprite', 'placeholder', 'default']):
-            return False
-        if any(keyword in alt_text for keyword in ['placeholder', 'default', 'image not available']):
-            return False
-        
-        # Filter out SVG images and small GIFs
-        if img_url.endswith('.svg') or img_url.endswith('.gif'):
-            return False
-
-        # Ensure alt text isn't empty or vague
-        if not alt_text or alt_text in ['image', 'photo', 'thumbnail']:
-            return False
-        
-        return True
-
-    # Find the main image from the infobox
-    infobox = soup.find('table', class_='infobox')
-    if infobox:
-        main_image_tag = infobox.find('img')
-        if main_image_tag and is_valid_image(main_image_tag):
-            main_image_url = f"https:{main_image_tag['src']}"
-            images.append(main_image_url)
-
-    # Find all images before the "References" section
-    references_header = soup.find('span', id='References')
-    if references_header:
-        for element in references_header.find_all_previous():
-            if len(images) >= 10:  # Limit to the first 10 images
-                break
-            if element.name == 'h2':
-                break  # Stop if we reach a new section
-            if element.name == 'img' and is_valid_image(element):
-                img_url = f"https:{element['src']}"
-                if img_url not in images:
-                    images.append(img_url)
-
-    # If fewer than 10 images were found, search for more on the page
-    if len(images) < 10:
-        all_images = soup.find_all('img')
-        for img_tag in all_images:
-            if is_valid_image(img_tag):
-                img_url = f"https:{img_tag['src']}"
-                if img_url not in images:
-                    images.append(img_url)
-            if len(images) >= 10:  # Stop when we have 10 images
-                break
-
-    return images[:10]  
 
 def position(name):
     html_content = get_page_content(name)
