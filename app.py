@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from scraper import log_search, get_player_info
+from scraper import get_player_info
 from trending_player import create_db, update_player_search, get_most_searched_players
 import requests
 import os
@@ -14,8 +14,7 @@ def index():
 
     if request.method == 'POST':
         player_name = request.form['player_name']
-        log_search(player_name)
-
+    
         update_player_search(player_name)
 
         try:
