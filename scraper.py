@@ -1,5 +1,4 @@
 import re
-import csv
 import os
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -39,17 +38,6 @@ def search_player(player_name):
     except requests.exceptions.RequestException as e:
         print(f"An error occurred during the search: {e}")
         return None
-
-def log_search(player_name):
-    file_path = 'logs/search_log.csv'
-    file_exists = os.path.isfile(file_path)
-    search_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    log_data = [player_name, search_time]
-    with open(file_path, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        if not file_exists:
-            writer.writerow(['Player Name', 'Search Timestamp'])
-        writer.writerow(log_data)
 
 def get_player_image(player_name):
     # Format the player name for use in the Wikipedia URL
