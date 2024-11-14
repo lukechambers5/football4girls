@@ -6,7 +6,7 @@ DB_PATH = os.path.join(os.getenv('DATABASE_DIR', '/var/data'), 'search_logs.db')
 
 
 def create_db():
-    conn = sqlite3.connect('search_logs.db')
+    conn = sqlite3.connect(DB_PATH)  # Use DB_PATH here to maintain consistency
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS search_log (
@@ -16,6 +16,7 @@ def create_db():
     ''')
     conn.commit()
     conn.close()
+
 
 def update_player_search(player_name):
     conn = sqlite3.connect(DB_PATH)
