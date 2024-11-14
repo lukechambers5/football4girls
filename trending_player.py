@@ -1,7 +1,9 @@
 import sqlite3
 from scraper import get_player_image
 import os
-DB_PATH = os.path.join('/var/data', 'search_logs.db')
+
+DB_PATH = os.path.join(os.getenv('DATABASE_DIR', '/tmp'), 'search_logs.db')
+
 
 def create_db():
     conn = sqlite3.connect('search_logs.db')
