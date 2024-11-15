@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from scraper import get_player_info
-from trending_player import create_db, update_player_search, get_most_searched_players
+from trending_player import create_db, update_player_search, get_most_searched_players, get_all_search_logs
 import requests
 
 app = Flask(__name__, static_url_path='/static')
@@ -27,6 +27,12 @@ def index():
             return redirect(url_for('error_page', message=str(e)))
 
     return render_template('index.html', player_info=player_info, most_searched_player=most_searched_player)
+
+@app.route('/search_logs', methods=['GET'])
+def search_logs():
+    logs = get_all_search_logs()  # This function will query the database for the logs
+    return render_template('search_logs.html', logs=logs)
+
 
 @app.route('/error')
 def error_page():

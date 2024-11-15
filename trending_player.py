@@ -4,7 +4,7 @@ import os
 
 DB_PATH = os.path.join(os.getenv('DATABASE_DIR', '/var/data'), 'search_logs.db')
 
-
+print(DB_PATH)
 def create_db():
     conn = sqlite3.connect(DB_PATH)  # Use DB_PATH here to maintain consistency
     cursor = conn.cursor()
@@ -52,3 +52,14 @@ def get_most_searched_players():
         }
     else:
         return None
+
+def get_all_search_logs():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT name, count FROM search_log ORDER BY count DESC')
+    results = cursor.fetchall()
+
+    conn.close()
+    
+    return results
