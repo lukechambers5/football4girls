@@ -223,19 +223,29 @@
             }
             
             .trending-player {
-                width: 230px; /* Smaller width on mobile */
-                font-size: 1em; /* Smaller font size */
-                padding: 12px;
+                position: relative; /* Change from fixed to relative for normal flow */
+                margin-top: 20px; /* Space between trending player and other sections */
+                width: 100%; /* Full width */
+                font-size: 0.9em; /* Adjust font size */
+                z-index: 100; /* Lower z-index so it doesn't overlap other elements */
+                order: 3; 
             }
 
             .corner-logo {
                 width: 120px; /* Smaller logo on mobile */
                 bottom: 10px;
+                order: 4;
             }
 
             h1 {
                 font-size: 2em;
+                order: 2;
             }
+            
+            .developer-contact{
+                order: 5;
+            }
+
         }
 
         /* For Tablet and Small Desktop Devices */
