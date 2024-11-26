@@ -353,7 +353,7 @@ def basketball_position(name):
     if "center" in position_val:
         return f'{name} plays the Center position! This means they are usually the tallest player on the court and are responsible for blocking shots, rebounding, and scoring close to the basket.'
     elif "power forward" in position_val:
-        return f'{name} plays the Power Forward position! They do a lot of the same things as a center, getting rebounds and guarding taller players on defense. They are frequently good outside shooters as well.'
+        return f'{name} plays the Power Forward position! They do a lot of the same things as a center, getting rebounds and guarding taller players on defense. They are sometimes good outside shooters as well.'
     elif "small forward" in position_val:
         return f'{name} plays the Small Forward position! They can play close or far and float around where they are needed throughout the game, guarding who needs to be guarded, and finding gaps in the defense.'
     elif "point guard" in position_val:
