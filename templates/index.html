@@ -319,14 +319,6 @@
     </div>
 {% endif %}
 
-{% if player_info and player_info.number %}
-    <div class="player-number">
-        <h3>Number</h3>
-        <p>{{ player_info.number }}</p>
-    </div>
-    {% endif %}
-
-
     <!-- Search Form -->
     <div class="form-container">
         <form method="post" onsubmit="hideTrendingPlayer()">
@@ -342,24 +334,31 @@
         <p>{{ player_info.extract }}</p>
         
         {% if player_info.image_url %}
-        <img src="{{ player_info.image_url }}" alt="{{ player_info.title }}">
+            <img src="{{ player_info.image_url }}" alt="{{ player_info.title }}">
         {% endif %}
         
-        <h2>Personal Life</h2>
-        <h3>Dating Life <i class="fas fa-heart" style="color:red;"></i></h3>
-        <p>{{ player_info.dating_life or 'No rizz' }}</p>
+        {% if player_info.dating_life or player_info.family_life %}
+            <h2>Personal Life</h2>
 
-        <h3>Family Life</h3>
-        <p>{{ player_info.family_life or 'No family information found.' }}</p>
+            {% if player_info.dating_life %}
+                <h3>Dating Life <i class="fas fa-heart" style="color:red;"></i></h3>
+                <p>{{ player_info.dating_life }}</p>
+            {% endif %}
+
+            {% if player_info.family_life %}
+                <h3>Family and Personal Life</h3>
+                <p>{{ player_info.family_life }}</p>
+            {% endif %}
+        {% endif %}
     
-
         {% if player_info.summary_url %}
-        <p><a href="{{ player_info.summary_url }}" target="_blank">Read more on Wikipedia</a></p>
+            <p><a href="{{ player_info.summary_url }}" target="_blank">Read more on Wikipedia</a></p>
         {% endif %}
     </div>
-    {% elif player_info is not none %}
+{% elif player_info is not none %}
     <p>No information found.</p>
-    {% endif %}
+{% endif %}
+
     
     <!-- Developer Contact Section -->
     <div class="developer-contact">

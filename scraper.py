@@ -126,31 +126,40 @@ def get_player_info(player_name):
         personal_life_content = extract_personal_life_info(html_content)
         cleaned_text = remove_bracket_numbers(personal_life_content)
 
-        # Get dating info and used sentences
-        dating_info, used_sentences = dating_stuff(cleaned_text)
-        family_info = family_stuff(cleaned_text, used_sentences)
-
-        position_explanation = determine_position(extract, title)
+        soup = BeautifulSoup(html_content, 'html.parser')
+        page_body = soup.body
+        page = ""
+        if page_body:
+            page = page_body.get_text(separator = ' ', strip = True)
+        page = page_body.get_text(separator = ' ', strip = True)
         
-        
+        if("professional football" in page.lower() or "professional basketball" in page.lower() or "professional soccer" in page.lower() or "professional hockey" in page.lower()):
+            dating_info, used_sentences = dating_stuff(cleaned_text)
+            family_info = family_stuff(cleaned_text, used_sentences)
 
-        # Check if the player is retired based on summary
-        if check_retirement(extract):
-            title += " (Retired)"
+            position_explanation = determine_position(extract, title)
+            
+            
+
+            # Check if the player is retired based on summary
+            if check_retirement(extract):
+                title += " (Retired)"
+            else:
+                title += " (Active)"  # Assuming they are active if not retired
+
+
+            return {
+                'title': title,
+                'extract': position_explanation,
+                'image_url': image_url,
+                'summary_url': summary_url,
+                'dating_life': dating_info,
+                'family_life': family_info,
+            }
         else:
-            title += " (Active)"  # Assuming they are active if not retired
-
-        player_number = number(html_content)
-
-        return {
-            'title': title,
-            'extract': position_explanation,
-            'image_url': image_url,
-            'summary_url': summary_url,
-            'dating_life': dating_info,
-            'family_life': family_info,
-            'player_number': player_number  # Include player's number
-        }
+            return{
+                'title': "Most likely not a sports player, or not a sport that is supported yet..."
+            }
 
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
@@ -269,39 +278,6 @@ def position(name):
     
     return "Position not found"
 
-def number(name):
-    html_content = get_page_content(name)
-
-    # Check if the HTML content was successfully retrieved
-    if not html_content:
-        print(f"Failed to retrieve HTML content for {name}.")
-        return None
-
-    soup = BeautifulSoup(html_content, 'html.parser')
-
-    # Try to find the infobox specifically with class 'infobox vcard' or any infobox
-    infobox = soup.find('table', class_='infobox')
-
-    if infobox:
-        print("Infobox found.")
-        
-        # Try to find the 'Position' row in the infobox
-        number_row = infobox.find('th', string=lambda text: text and "No." in text)
-        if number_row:
-            number_val = number_row.find_next('td')
-            print(number_val)
-            if number_val:
-                number = number_val.get_text(separator=" ", strip=True)
-                print(number)
-                return number
-            else:
-                print("No 'td' element found after 'number'.")
-        else:
-            print("number row not found in infobox.")
-    else:
-        print(f"Infobox not found for {name}. Printing the first table on the page for inspection:")
-    
-    return "Position not found"
 def determine_position(summary, name):
     if("football" in summary):
         return football_position(name)
