@@ -2,8 +2,8 @@ import sqlite3
 from scraper import get_player_image
 import os
 
-DB_PATH = os.path.join(os.getenv('DATABASE_DIR', '/var/data'), 'search_logs.db') #For running publicly
-#DB_PATH = 'search_logs.db' - change to run locally
+#DB_PATH = os.path.join(os.getenv('DATABASE_DIR', '/var/data'), 'search_logs.db') #For running publicly
+DB_PATH = 'search_logs.db' # change to run locally
 
 def create_db():
     conn = sqlite3.connect(DB_PATH)  # Use DB_PATH here to maintain consistency
