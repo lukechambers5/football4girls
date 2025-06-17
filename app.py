@@ -5,7 +5,6 @@ import requests
 
 app = Flask(__name__, static_url_path='/static')
 
-# Ensure database is created on startup
 create_db()
 
 @app.route('/', methods=['GET', 'POST'])
@@ -40,8 +39,6 @@ def error_page():
     return render_template('error.html', message=message)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
 
-
-#sudo nano /etc/resolv.conf
