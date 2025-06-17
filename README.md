@@ -20,6 +20,7 @@ football4girls is a web app that lets you search for any professional **sports p
 - 📈 **Trending Player**
   - Tracks search counts using a local database
   - Shows the most searched player + their image
+  - (Currently broken but will be fixed soon)
 
 - ⚙️ **Built With**
   - Python & Flask
