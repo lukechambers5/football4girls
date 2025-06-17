@@ -35,9 +35,3 @@ football4girls is a web app that lets you search for any professional **sports p
 No login or signup needed — just search and explore.
 
 ---
-
-
-## 👨‍💻 Made by
-
-**Luke Chambers**  
-[GitHub](https://github.com/lukechambers5)
